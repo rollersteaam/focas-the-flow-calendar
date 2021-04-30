@@ -24,5 +24,6 @@
 		"default_icon": "icon.png",
 		"default_title": "Focas",
 		"default_popup": "app/dist/index.html"
-	}
+	},
+	"web_accessible_resources": ["app/dist/img/*.png"]
 }
