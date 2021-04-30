@@ -1,7 +1,7 @@
 {
-	"name": "Awesome Extension",
-	"version": "0.0.0",
-	"description": "An awesome new browser extension",
+	"name": "Focas - Flow-optimising Auto Scheduler",
+	"version": "0.1.0",
+	"description": "Automatically schedule the day, with the aim of optimising the amount of flow you can reach.",
 	"homepage_url": "https://github.com/awesome-templates/browser-extension-template",
 	"manifest_version": 2,
 	"minimum_chrome_version": "74",
@@ -17,14 +17,12 @@
 	"permissions": [
 		"storage"
 	],
-	"options_ui": {
-		"chrome_style": true,
-		"page": "options.html"
-	},
 	"background": {
-		"persistent": false,
-		"scripts": [
-			"background.js"
-		]
+		"scripts": ["background.js"]
+	},
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_title": "Focas",
+		"default_popup": "app/dist/index.html"
 	}
 }

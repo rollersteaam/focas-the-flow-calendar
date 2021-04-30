@@ -1,2 +1,14 @@
-// eslint-disable-next-line import/no-unassigned-import
-import './options-storage.js';
+// function onCreated(tab) {
+// 	console.log(`Created new tab: ${tab.id}`)
+// }
+
+// function onError(error) {
+// 	console.log(`Error: ${error}`);
+// }
+
+// browser.browserAction.onClicked.addListener(function () {
+// 	var creating = browser.tabs.create({
+// 		url: "/app/index.html"
+// 	});
+// 	creating.then(onCreated, onError);
+// });
