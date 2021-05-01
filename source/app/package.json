@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "animate.css": "^4.1.1",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "date-fns": "^2.21.1",
+    "googleapis": "^39.2.0",
     "vue": "^2.6.11",
     "vuex": "^3.4.0"
   },

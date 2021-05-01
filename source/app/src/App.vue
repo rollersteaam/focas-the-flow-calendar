@@ -29,8 +29,11 @@ export default {
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
 	color: #2c3e50;
-	max-width: 800px;
-	max-height: 600px;
+}
+
+.popup {
+	width: 640px;
+	max-height: 480px;
 	overflow: auto;
 }
 </style>

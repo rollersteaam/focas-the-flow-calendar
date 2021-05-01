@@ -2,21 +2,13 @@
 	"name": "Focas - Flow-optimising Auto Scheduler",
 	"version": "0.1.0",
 	"description": "Automatically schedule the day, with the aim of optimising the amount of flow you can reach.",
-	"homepage_url": "https://github.com/awesome-templates/browser-extension-template",
+	"homepage_url": "https://github.com/rollersteaam/flow-optimised-calendar-auto-scheduler",
 	"manifest_version": 2,
 	"minimum_chrome_version": "74",
-	"applications": {
-		"gecko": {
-			"id": "awesome-extension@notlmn.github.io",
-			"strict_min_version": "67.0"
-		}
-	},
 	"icons": {
 		"128": "icon.png"
 	},
-	"permissions": [
-		"storage"
-	],
+	"permissions": ["storage", "identity"],
 	"background": {
 		"scripts": ["background.js"]
 	},
@@ -25,5 +17,11 @@
 		"default_title": "Focas",
 		"default_popup": "app/dist/index.html"
 	},
-	"web_accessible_resources": ["app/dist/img/*.png"]
+	"web_accessible_resources": ["app/dist/img/*.png"],
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "rollersteaam@gmail.com",
+			"strict_min_version": "67.0"
+		}
+	}
 }
