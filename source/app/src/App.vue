@@ -1,12 +1,22 @@
 <template>
-	<div id="app">
-		<StartScreen />
+	<div id="app" class="border border-blueGray-300">
+		<component :is="views.StartView" />
 	</div>
 </template>
 
 <script>
+import StartView from "@/views/StartView";
+import "animate.css";
+
 export default {
 	name: "App",
+	data() {
+		return {
+			views: {
+				StartView,
+			},
+		};
+	},
 };
 </script>
 
@@ -19,5 +29,8 @@ export default {
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
 	color: #2c3e50;
+	max-width: 800px;
+	max-height: 600px;
+	overflow: auto;
 }
 </style>
