@@ -1,5 +1,8 @@
 # Focas - Flow-optimised Calendar Auto Scheduler
 
+## What is this?
+A browser extension which automatically optimises your day's calendar to get the most deep work possible out of your day. This means we try to optimise the most amount of flow you can get, which ultimately is a target of reaching the most happiness out of a day.
+
 ## How to Dev
 Focas is a browser extension targeting Firefox and Chrome. This guide https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension has been followed for the most part to ensure both browsers can be hit. You could add support for other browsers in a pull request if you wanted :)
 
