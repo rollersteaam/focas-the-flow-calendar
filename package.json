@@ -1,56 +1,43 @@
 {
-	"private": true,
-	"scripts": {
-		"build": "parcel build source/manifest.json --no-content-hash --no-source-maps --dist-dir distribution --no-cache --detailed-report 0",
-		"lint": "run-p lint:*",
-		"lint-fix": "run-p 'lint:* -- --fix'",
-		"lint:css": "stylelint source/**/*.css",
-		"lint:js": "xo",
-		"test": "run-p lint:* build",
-		"watch": "parcel watch source/manifest.json --dist-dir distribution --no-cache --no-hmr"
-	},
-	"browserslist": [
-		"last 1 Chrome version",
-		"last 1 Firefox version"
-	],
-	"xo": {
-		"envs": [
-			"browser"
-		],
-		"rules": {
-			"no-unused-vars": [
-				"error",
-				{
-					"varsIgnorePattern": "browser"
-				}
-			]
-		}
-	},
-	"stylelint": {
-		"extends": "stylelint-config-xo"
-	},
-	"dependencies": {
-		"webext-options-sync": "^2.0.1",
-		"webextension-polyfill": "^0.7.0"
-	},
-	"devDependencies": {
-		"@parcel/config-webextension": "^2.0.0-nightly.2220",
-		"@parcel/optimizer-cssnano": "^2.0.0-nightly.599",
-		"@parcel/optimizer-htmlnano": "^2.0.0-nightly.599",
-		"@parcel/packager-css": "^2.0.0-nightly.599",
-		"@parcel/packager-html": "^2.0.0-nightly.599",
-		"@parcel/transformer-css": "^2.0.0-nightly.599",
-		"@parcel/transformer-html": "^2.0.0-nightly.598",
-		"@parcel/transformer-postcss": "^2.0.0-nightly.599",
-		"@parcel/transformer-posthtml": "^2.0.0-nightly.598",
-		"@parcel/transformer-webextension": "^2.0.0-nightly.2220",
-		"npm-run-all": "^4.1.5",
-		"parcel": "^2.0.0-nightly.596",
-		"stylelint": "^13.10.0",
-		"stylelint-config-xo": "^0.20.0",
-		"xo": "^0.37.1"
-	},
-	"webExt": {
-		"sourceDir": "distribution"
-	}
+  "name": "focas",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service build --mode development --watch",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss7-compat": "^2.0.2",
+    "animate.css": "^4.1.1",
+    "autoprefixer": "^9",
+    "axios": "^0.20.0",
+    "core-js": "^3.6.5",
+    "date-fns": "^2.21.1",
+    "postcss": "^7",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
+    "vue": "^2.6.11",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^6.2.2",
+    "prettier": "^2.2.1",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "vue-cli-plugin-browser-extension": "latest",
+    "vue-cli-plugin-import-components": "~1.0.1",
+    "vue-cli-plugin-tailwind": "~2.0.6",
+    "vue-template-compiler": "^2.6.11",
+    "webextension-polyfill": "^0.8.0"
+  }
 }

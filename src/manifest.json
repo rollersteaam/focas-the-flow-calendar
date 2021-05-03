@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+  "name": "Focas",
+  "homepage_url": "https://github.com/rollersteaam/flow-optimised-calendar-auto-scheduler",
+  "description": "Optimise your amount of flow by auto-scheduling your day.",
+  "default_locale": "en",
+  "icons": {
+    "128": "assets/icon.png"
+  },
+  "permissions": ["storage", "identity"],
+  "background": {
+    "scripts": ["js/background.js"],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "Focas",
+    "default_icon": "assets/icon.png"
+  },
+  "web_accessible_resources": ["assets/*.png"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "rollersteaam@gmail.com",
+      "strict_min_version": "67.0"
+    }
+  }
+}
