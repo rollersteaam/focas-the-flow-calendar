@@ -30,7 +30,7 @@
             class="animate__animated animate__fadeInDown animate__delay-1s"
           >
             <span class="truncate">
-              {{ calendar.name }} ({{ calendar.numberOfEvents }} today)
+              {{ calendar.name }} ({{ calendar.numberOfEvents }} events today)
             </span>
             <span class="cursor-pointer" @click="tickCalendar(calendar)">
               <Tick
@@ -66,9 +66,12 @@
           </div>
         </div>
       </div>
-      <div class="mb-4">Okay, so here are today's events.</div>
+      <div class="mb-4">
+        Okay, so here are today's events. Tick the calendars that you're
+        following today.
+      </div>
       <div class="mb-8">
-        Could you check off the ones that
+        Could you also check off the events that
         <b>you can't move to a different time</b>?
       </div>
       <Button
@@ -180,7 +183,6 @@ export default {
         this.$delete(this.filteredCalendars, changedCalendar.id);
       }
       changedCalendar.ticked = !changedCalendar.ticked;
-      console.log(this.filteredCalendars);
       this.updateShownEvents();
     },
     optimise() {},
