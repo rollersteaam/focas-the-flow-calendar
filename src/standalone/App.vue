@@ -1,18 +1,21 @@
 <template>
-  <div id="app" class="p-5 pb-8 popup">
-    <LaunchStartView />
+  <div id="app">
+    <component :is="views.StartView" />
   </div>
 </template>
 
 <script>
+import StartView from "@/views/StartView";
 import "animate.css";
-
-import LaunchStartView from "./components/LaunchStartView";
 
 export default {
   name: "App",
-  components: {
-    LaunchStartView,
+  data() {
+    return {
+      views: {
+        StartView,
+      },
+    };
   },
 };
 </script>
@@ -26,11 +29,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  overflow: hidden;
-}
-
-.popup {
-  width: 640px;
-  max-height: 480px;
 }
 </style>

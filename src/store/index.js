@@ -24,7 +24,7 @@ export default new Vuex.Store({
       ] = `Bearer ${access.access_token}`;
       axios.defaults.baseURL = "https://www.googleapis.com/calendar/v3/";
     },
-    async getAllEvents({ commit }) {
+    async getAllTodayEvents({ commit }) {
       const request = await axios.get("calendars/primary/events", {
         params: {
           timeMin: new Date().toISOString(),

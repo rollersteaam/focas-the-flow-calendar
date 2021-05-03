@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-1/2">
     <Header />
     <div class="mb-7">
       <span>To get started, </span>
@@ -20,8 +20,6 @@
 </template>
 
 <script>
-const browser = require("webextension-polyfill");
-
 export default {
   name: "ConnectView",
   data() {

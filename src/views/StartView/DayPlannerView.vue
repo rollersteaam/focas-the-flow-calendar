@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-1/2">
     <Header />
     <div
       v-if="level === 'connected'"
@@ -36,8 +36,7 @@
         </div>
       </div>
       <div class="mb-4">
-        Okay, so here are your already scheduled events for today. Hover over
-        and check off any you've already done.
+        Okay, so here are today's events. Could you check off the ones that <b>you can't move to a different time</b>?
       </div>
       <Button
         text="Continue"
@@ -51,20 +50,23 @@
       <div class="mb-4">It's time for me to do some flow-optimising magic.</div>
       <div class="text-3xl mb-4">⚗️</div>
       <div class="mb-4">
-        Just a reminder, what I'm about to do next is not reversible. I'm going
-        to organise all your events to begin from now in a 'chain', one after
-        the other, moving them around where I can to give you the most flow time
-        (time that's uninterrupted).
+        Just a reminder, what I'm about to do next is not reversible.
+      </div>
+      <div class="mb-4">
+        I'm going to organise all your events to begin after one another in a row, and then I'll move them around to give you the most flow time (time that's uninterrupted). No events will be deleted.
       </div>
       <Button
-        text="Continue"
+        text="Optimise"
         theme="primary"
         class="mb-4"
         @click="level = 'optimise'"
       />
     </div>
-    <div v-else-if="level === 'optimise'">
-      <div class="text-5xl">⚗️</div>
+    <div
+      v-else-if="level === 'optimise'"
+      class="animate__animated animate__fadeIn"
+    >
+      <div class="text-5xl mb-2 pt-4 motion-safe:animate-bounce">⚗️</div>
       <div>Optimising...</div>
     </div>
   </div>
@@ -82,7 +84,7 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch("getAllEvents");
+    this.$store.dispatch("getAllTodayEvents");
     setTimeout(() => (this.level = "purgeUsedEvents"), 2000);
   },
   computed: {
@@ -91,6 +93,11 @@ export default {
   watch: {
     events() {
       this.currentEvents = [...this.events];
+    },
+    level() {
+      if (this.level === "optimise") {
+        this.optimise();
+      }
     },
   },
   methods: {
@@ -115,6 +122,7 @@ export default {
       newEvents[index] = changedEvent;
       this.currentEvents = newEvents;
     },
+    optimise() {},
   },
 };
 </script>

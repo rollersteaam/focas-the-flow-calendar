@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import LaunchStartView from "@/views/StartView/LaunchStartView";
 import ConnectView from "@/views/StartView/ConnectView";
 import DayPlannerView from "@/views/StartView/DayPlannerView";
 
@@ -14,11 +13,10 @@ export default {
   data() {
     return {
       views: {
-        start: LaunchStartView,
         connect: ConnectView,
         dayplanner: DayPlannerView,
       },
-      currentView: "start",
+      currentView: "connect",
     };
   },
   methods: {
