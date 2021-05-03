@@ -1,5 +1,5 @@
 <template>
-  <div class="p-5 pb-8 popup">
+  <div class="p-5 pb-8 popup lg:w-4/6">
     <component :is="views[currentView]" @view-change="changeView" />
   </div>
 </template>

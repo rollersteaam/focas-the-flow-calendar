@@ -1,5 +1,5 @@
 <template>
-  <div class="w-1/2">
+  <div>
     <Header />
     <div class="mb-7">
       <span>To get started, </span>

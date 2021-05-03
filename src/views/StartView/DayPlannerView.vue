@@ -1,5 +1,5 @@
 <template>
-  <div class="w-1/2">
+  <div>
     <Header />
     <div
       v-if="level === 'connected'"
@@ -17,29 +17,62 @@
       </div>
       <div>Let's do this...</div>
     </div>
-    <div v-else-if="level === 'purgeUsedEvents'">
-      <div class="my-4 text-left">
-        <span class="text-blueGray-400">Events</span>
-        <div v-for="event in currentEvents" :key="event.id">
-          <span class="text-blueGray-300 border-r border-blueGray-300 pr-1">{{
-            formatAsCalendarTime(event)
-          }}</span>
-          {{ event.summary }}
-          <span class="cursor-pointer" @click="tickEvent(event)">
-            <Tick
-              width="12"
-              height="12"
-              class="inline mb-1"
-              :background="event.ticked ? '#32c671' : '#e3e3e3'"
-            />
-          </span>
+    <div
+      v-else-if="level === 'purgeUsedEvents'"
+      class="animate__animated animate__fadeIn"
+    >
+      <div class="flex">
+        <div class="my-4 text-left flex-none">
+          <span class="text-blueGray-400">Calendars</span>
+          <div
+            v-for="calendar in calendars"
+            :key="calendar.id"
+            class="animate__animated animate__fadeInDown animate__delay-1s"
+          >
+            <span class="truncate">
+              {{ calendar.name }} ({{ calendar.numberOfEvents }} today)
+            </span>
+            <span class="cursor-pointer" @click="tickCalendar(calendar)">
+              <Tick
+                width="12"
+                height="12"
+                class="inline mb-1"
+                :background="calendar.ticked ? '#32c671' : '#e3e3e3'"
+              />
+            </span>
+          </div>
+        </div>
+        <div class="my-4 text-left flex-initial">
+          <span class="text-blueGray-400">Events</span>
+          <div
+            v-for="event in currentEvents"
+            :key="event.id"
+            class="animate__animated animate__fadeInDown animate__delay-1s truncate"
+          >
+            <span class="text-blueGray-300 border-r border-blueGray-300 pr-1">{{
+              formatAsCalendarTime(event)
+            }}</span>
+            <span class="truncate">
+              {{ event.summary }}
+            </span>
+            <span class="cursor-pointer" @click="tickEvent(event)">
+              <Tick
+                width="12"
+                height="12"
+                class="inline mb-1"
+                :background="event.ticked ? '#32c671' : '#e3e3e3'"
+              />
+            </span>
+          </div>
         </div>
       </div>
-      <div class="mb-4">
-        Okay, so here are today's events. Could you check off the ones that <b>you can't move to a different time</b>?
+      <div class="mb-4">Okay, so here are today's events.</div>
+      <div class="mb-8">
+        Could you check off the ones that
+        <b>you can't move to a different time</b>?
       </div>
       <Button
-        text="Continue"
+        text="I'm Done"
         theme="primary"
         class="mb-4"
         @click="level = 'optimiseWarning'"
@@ -52,8 +85,10 @@
       <div class="mb-4">
         Just a reminder, what I'm about to do next is not reversible.
       </div>
-      <div class="mb-4">
-        I'm going to organise all your events to begin after one another in a row, and then I'll move them around to give you the most flow time (time that's uninterrupted). No events will be deleted.
+      <div class="mb-8">
+        I'm going to organise all your events to begin after one another in a
+        row, and then I'll move them around to give you the most flow time (time
+        that's uninterrupted). No events will be deleted.
       </div>
       <Button
         text="Optimise"
@@ -81,18 +116,26 @@ export default {
     return {
       level: "connected",
       currentEvents: [],
+      calendars: [],
+      filteredCalendars: {},
     };
   },
   mounted() {
-    this.$store.dispatch("getAllTodayEvents");
     setTimeout(() => (this.level = "purgeUsedEvents"), 2000);
+    this.$store.dispatch("getAllTodayEvents");
   },
   computed: {
     ...mapState(["events"]),
   },
   watch: {
     events() {
-      this.currentEvents = [...this.events];
+      this.calendars = Object.values(this.events).map((calendar) => {
+        calendar.ticked = false;
+        calendar.numberOfEvents = calendar.events.length;
+        this.$set(this.filteredCalendars, calendar.id, true);
+        return calendar;
+      });
+      this.updateShownEvents();
     },
     level() {
       if (this.level === "optimise") {
@@ -101,12 +144,22 @@ export default {
     },
   },
   methods: {
+    updateShownEvents() {
+      this.currentEvents = Object.values(this.events)
+        .filter((calendar) => !(calendar.id in this.filteredCalendars))
+        .map((calendar) => calendar.events)
+        .flat()
+        .sort((a, b) =>
+          parseISO(a.start.dateTime) <= parseISO(b.start.dateTime) ? -1 : 1
+        );
+    },
     formatAsCalendarTime(event) {
       if (!event.start.dateTime) {
+        console.error(
+          "This event is an all-day event. We do not support all-day events, please remove them from your input."
+        );
         return "All Day";
       }
-
-      console.log(event.start.dateTime);
 
       return `${format(parseISO(event.start.dateTime), "kk:mm")} - ${format(
         parseISO(event.end.dateTime),
@@ -117,10 +170,18 @@ export default {
       let index = this.currentEvents.findIndex(
         (event) => event.id === changedEvent.id
       );
-      let newEvents = [...this.currentEvents];
       changedEvent.ticked = !changedEvent.ticked;
-      newEvents[index] = changedEvent;
-      this.currentEvents = newEvents;
+      this.$set(this.currentEvents, index, changedEvent);
+    },
+    tickCalendar(changedCalendar) {
+      if (changedCalendar.ticked) {
+        this.$set(this.filteredCalendars, changedCalendar.id, true);
+      } else {
+        this.$delete(this.filteredCalendars, changedCalendar.id);
+      }
+      changedCalendar.ticked = !changedCalendar.ticked;
+      console.log(this.filteredCalendars);
+      this.updateShownEvents();
     },
     optimise() {},
   },

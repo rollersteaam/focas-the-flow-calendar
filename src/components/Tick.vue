@@ -50,8 +50,8 @@
 <script>
 export default {
   props: {
-    width: Number,
-    height: Number,
+    width: String,
+    height: String,
     background: {
       type: String,
       default: "#32c671",

@@ -1,13 +1,14 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import { startOfToday, endOfToday } from "date-fns";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     client: null,
-    events: [],
+    events: {},
   },
   mutations: {
     setClient(state, client) {
@@ -25,20 +26,33 @@ export default new Vuex.Store({
       axios.defaults.baseURL = "https://www.googleapis.com/calendar/v3/";
     },
     async getAllTodayEvents({ commit }) {
-      const request = await axios.get("calendars/primary/events", {
-        params: {
-          timeMin: new Date().toISOString(),
-          maxResults: 10,
-          singleEvents: true,
-          orderBy: "startTime",
-        },
-      });
+      const calendars = (await axios.get("users/me/calendarList")).data.items;
 
-      const events = request.data.items;
-      events.map((event) => {
-        const start = event.start.dateTime || event.start.date;
-        console.log(`${start} - ${event.summary}`);
-      });
+      const calendarsEventsRequests = calendars.map((calendar) =>
+        axios.get(`calendars/${calendar.id}/events`, {
+          params: {
+            timeMin: startOfToday().toISOString(),
+            timeMax: endOfToday().toISOString(),
+            singleEvents: true,
+          },
+        })
+      );
+      const calendarsEvents = (
+        await Promise.allSettled(calendarsEventsRequests)
+      ).map((eventPromise) => eventPromise.value?.data.items || []);
+
+      // Map calendars to events in a dictionary
+      const events = calendars.reduce((acc, calendar, index) => {
+        acc[calendar.id] = {
+          id: calendar.id,
+          name: calendar.summary,
+          events: calendarsEvents[index].filter(
+            (event) => event.start.dateTime // Ignore all day events
+          ),
+        };
+        return acc;
+      }, {});
+
       commit("setEvents", events);
     },
   },
