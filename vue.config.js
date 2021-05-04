@@ -8,7 +8,7 @@ module.exports = {
     standalone: {
       template: "public/index.html",
       entry: "./src/standalone/main.js",
-      title: "Focas",
+      title: "Flowcas",
     },
   },
   pluginOptions: {

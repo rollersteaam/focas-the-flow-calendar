@@ -1,11 +1,11 @@
-# Focas - The Flow Calendar
-Focas = **F**low **O**ptimised **C**alendar **A**uto **S**cheduler
+# Flowcas - The Flow Calendar
+Flowcas = **F**l**o**w **O**ptimised **C**alendar **A**uto **S**cheduler
 
 ## What is this?
 A browser extension which auto-schedules your day so you can get the most flow out of it. Connects to Google Calendar.
 
 ## How to Dev
-Focas is a browser extension targeting Firefox and Chrome that uses Vue for its frontend.
+Flowcas is a browser extension targeting Firefox and Chrome that uses Vue for its frontend.
 
 This guide https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension has been followed for the most part to ensure both browsers can be hit. You could add support for other browsers in a pull request if you wanted :)
 

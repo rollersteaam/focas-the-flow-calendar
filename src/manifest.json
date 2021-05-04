@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Focas",
+  "name": "Flowcas",
   "homepage_url": "https://github.com/rollersteaam/flow-optimised-calendar-auto-scheduler",
   "description": "Optimise your amount of flow by auto-scheduling your day.",
   "default_locale": "en",
@@ -14,7 +14,7 @@
   },
   "browser_action": {
     "default_popup": "popup.html",
-    "default_title": "Focas",
+    "default_title": "Flowcas",
     "default_icon": "assets/icon.png"
   },
   "web_accessible_resources": ["assets/*.png"],
