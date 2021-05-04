@@ -27,10 +27,14 @@
           <div
             v-for="calendar in calendars"
             :key="calendar.id"
-            class="animate__animated animate__fadeInDown animate__delay-1s"
+            class="animate__animated animate__fadeInDown"
           >
             <span class="truncate">
-              {{ calendar.name }} ({{ calendar.numberOfEvents }} events today)
+              {{ calendar.name }}
+            </span>
+            <span class="text-blueGray-400">
+              ({{ calendar.numberOfEvents }}
+              events today)
             </span>
             <span class="cursor-pointer" @click="tickCalendar(calendar)">
               <Tick
@@ -47,13 +51,13 @@
           <div
             v-for="event in currentEvents"
             :key="event.id"
-            class="animate__animated animate__fadeInDown animate__delay-1s truncate"
+            class="animate__animated animate__fadeInDown truncate"
           >
             <span class="text-blueGray-300 border-r border-blueGray-300 pr-1">{{
               formatAsCalendarTime(event)
             }}</span>
             <span class="truncate">
-              {{ event.summary }}
+              {{ event.summary || "(busy)" }}
             </span>
             <span class="cursor-pointer" @click="tickEvent(event)">
               <Tick
@@ -70,9 +74,13 @@
         Okay, so here are today's events. Tick the calendars that you're
         following today.
       </div>
-      <div class="mb-8">
-        Could you also check off the events that
+      <div class="mb-4">
+        Could you also tick the events that
         <b>you can't move to a different time</b>?
+      </div>
+      <div class="mb-8 bg-blue-300 p-5 text-blueGray-50">
+        I'll try to intelligently remember what you've ticked so you don't need
+        to do this as much next time.
       </div>
       <Button
         text="I'm Done"
@@ -119,6 +127,7 @@ export default {
     return {
       level: "connected",
       currentEvents: [],
+      filteredEvents: {},
       calendars: [],
       filteredCalendars: {},
     };
@@ -132,12 +141,23 @@ export default {
   },
   watch: {
     events() {
-      this.calendars = Object.values(this.events).map((calendar) => {
-        calendar.ticked = false;
-        calendar.numberOfEvents = calendar.events.length;
-        this.$set(this.filteredCalendars, calendar.id, true);
-        return calendar;
-      });
+      this.filteredCalendars = JSON.parse(
+        localStorage.getItem("filteredCalendars") || "{}"
+      );
+      this.calendars = Object.values(this.events)
+        .map((calendar) => {
+          calendar.numberOfEvents = calendar.events.length;
+
+          if (!(calendar.id in this.filteredCalendars)) {
+            calendar.ticked = true;
+          } else {
+            calendar.ticked = false;
+            this.$set(this.filteredCalendars, calendar.id, true);
+          }
+
+          return calendar;
+        })
+        .sort((a, b) => b.numberOfEvents - a.numberOfEvents);
       this.updateShownEvents();
     },
     level() {
@@ -148,13 +168,20 @@ export default {
   },
   methods: {
     updateShownEvents() {
+      this.filteredEvents = JSON.parse(
+        localStorage.getItem("filteredEvents") || "{}"
+      );
       this.currentEvents = Object.values(this.events)
         .filter((calendar) => !(calendar.id in this.filteredCalendars))
         .map((calendar) => calendar.events)
         .flat()
         .sort((a, b) =>
           parseISO(a.start.dateTime) <= parseISO(b.start.dateTime) ? -1 : 1
-        );
+        )
+        .map((event) => {
+          event.ticked = (event.summary || "(busy)") in this.filteredEvents;
+          return event;
+        });
     },
     formatAsCalendarTime(event) {
       if (!event.start.dateTime) {
@@ -175,6 +202,17 @@ export default {
       );
       changedEvent.ticked = !changedEvent.ticked;
       this.$set(this.currentEvents, index, changedEvent);
+
+      const eventName = changedEvent.summary || "(busy)";
+      if (changedEvent.ticked) {
+        this.filteredEvents[eventName] = true;
+      } else {
+        this.$delete(this.filteredEvents, eventName);
+      }
+      localStorage.setItem(
+        "filteredEvents",
+        JSON.stringify(this.filteredEvents)
+      );
     },
     tickCalendar(changedCalendar) {
       if (changedCalendar.ticked) {
@@ -184,6 +222,10 @@ export default {
       }
       changedCalendar.ticked = !changedCalendar.ticked;
       this.updateShownEvents();
+      localStorage.setItem(
+        "filteredCalendars",
+        JSON.stringify(this.filteredCalendars)
+      );
     },
     optimise() {},
   },
