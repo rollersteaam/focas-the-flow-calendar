@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
-import { startOfToday, endOfToday } from "date-fns";
+import { startOfToday, endOfToday, parseISO } from "date-fns";
 
 Vue.use(Vuex);
 
@@ -26,6 +26,8 @@ export default new Vuex.Store({
       axios.defaults.baseURL = "https://www.googleapis.com/calendar/v3/";
     },
     async getAllTodayEvents({ commit }) {
+      console.log("Getting your events now!");
+
       const calendars = (await axios.get("users/me/calendarList")).data.items;
 
       const calendarsEventsRequests = calendars.map((calendar) =>
@@ -46,9 +48,15 @@ export default new Vuex.Store({
         acc[calendar.id] = {
           id: calendar.id,
           name: calendar.summary,
-          events: calendarsEvents[index].filter(
-            (event) => event.start.dateTime // Ignore all day events
-          ),
+          events: calendarsEvents[index]
+            .filter(
+              (event) => event.start.dateTime // Ignore all day events
+            )
+            .map((event) => {
+              event.start.dateTime = parseISO(event.start.dateTime);
+              event.end.dateTime = parseISO(event.end.dateTime);
+              return event;
+            }),
         };
         return acc;
       }, {});
