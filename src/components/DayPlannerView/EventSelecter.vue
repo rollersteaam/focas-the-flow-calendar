@@ -2,7 +2,7 @@
   <div>
     <div class="flex">
       <div
-        class="my-4 text-left flex-auto flex-shrink-0 bg-gray-50 rounded p-1 m-1"
+        class="my-4 text-left flex-initial flex-shrink-0 bg-gray-50 rounded p-1 m-1"
       >
         <span class="text-blueGray-400">Calendars</span>
         <div
@@ -30,8 +30,8 @@
           </span>
         </div>
       </div>
-      <div class="my-4 text-left flex-initial bg-gray-50 rounded p-1 m-1">
-        <span class="text-blueGray-400">Events</span>
+      <div class="my-4 text-left flex-initial bg-gray-50 rounded p-1 m-1 w-80">
+        <!-- <span class="text-blueGray-400">Events</span>
         <div
           v-for="event in currentEvents"
           :key="event.id"
@@ -52,8 +52,12 @@
               :background="event.ticked ? '#32c671' : '#e3e3e3'"
             />
           </span>
-        </div>
-        <Calendar :events="currentEvents" :height="800" />
+        </div> -->
+        <Calendar
+          :events="currentEvents"
+          :height="800"
+          @event-click="tickEvent"
+        />
       </div>
     </div>
     <div class="mb-4">
