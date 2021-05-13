@@ -28,3 +28,6 @@ If the day hasn't been confirmed and the user is using the browser, trigger a fu
 
 ### Event Notifications
 When a calendar event triggers, FOCAS shows a full screen notification showing the event. The user can confirm "I'm doing the event", or, they can say "my day has got off track". If the day has got off track, the Day Planner runs again.
+
+## Credits
+Notification loop: ringtone2-freesound.wav - Thoribass (https://freesound.org/people/Thoribass/sounds/254822/)

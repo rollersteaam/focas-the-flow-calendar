@@ -31,28 +31,16 @@
         </div>
       </div>
       <div class="my-4 text-left flex-initial bg-gray-50 rounded p-1 m-1 w-80">
-        <!-- <span class="text-blueGray-400">Events</span>
-        <div
-          v-for="event in currentEvents"
-          :key="event.id"
-          class="animate__animated animate__fadeInDown flex"
-        >
-          <span
-            class="text-blueGray-300 border-r border-blueGray-300 pr-1 flex-none"
-            >{{ formatAsCalendarTime(event) }}</span
+        <div class="text-center">
+          <Button
+            theme="bespoke"
+            class="my-2 inline-block mx-auto"
+            @click="refresh"
           >
-          <span class="truncate flex-initial px-1">
-            {{ event.summary || "(busy)" }}
-          </span>
-          <span class="cursor-pointer flex-none" @click="tickEvent(event)">
-            <Tick
-              width="12"
-              height="12"
-              class="inline mb-1"
-              :background="event.ticked ? '#32c671' : '#e3e3e3'"
-            />
-          </span>
-        </div> -->
+            <div v-if="refreshing"><Spinner /></div>
+            <div v-else>Refresh</div>
+          </Button>
+        </div>
         <Calendar
           :events="currentEvents"
           :height="800"
@@ -93,33 +81,48 @@ export default {
       filteredEvents: {},
       calendars: [],
       filteredCalendars: {},
+      refreshing: false,
     };
   },
   computed: {
     ...mapState(["events"]),
   },
   mounted() {
-    this.filteredCalendars = JSON.parse(
-      localStorage.getItem("filteredCalendars") || "{}"
-    );
-    this.calendars = Object.values(this.events)
-      .map((calendar) => {
-        calendar.numberOfEvents = calendar.events.length;
-
-        if (!(calendar.id in this.filteredCalendars)) {
-          calendar.ticked = true;
-        } else {
-          calendar.ticked = false;
-          this.$set(this.filteredCalendars, calendar.id, true);
-        }
-
-        return calendar;
-      })
-      .sort((a, b) => b.numberOfEvents - a.numberOfEvents);
-    console.log(this.calendars);
-    this.updateShownEvents();
+    this.loadData();
+  },
+  watch: {
+    events() {
+      this.loadData();
+    },
   },
   methods: {
+    async refresh() {
+      this.refreshing = true;
+      await this.$store.dispatch("getAllTodayEvents");
+      this.loadData();
+      this.refreshing = false;
+    },
+    loadData() {
+      this.filteredCalendars = JSON.parse(
+        localStorage.getItem("filteredCalendars") || "{}"
+      );
+      this.calendars = Object.values(this.events)
+        .map((calendar) => {
+          calendar.numberOfEvents = calendar.events.length;
+
+          if (!(calendar.id in this.filteredCalendars)) {
+            calendar.ticked = true;
+          } else {
+            calendar.ticked = false;
+            this.$set(this.filteredCalendars, calendar.id, true);
+          }
+
+          return calendar;
+        })
+        .sort((a, b) => b.numberOfEvents - a.numberOfEvents);
+      console.log(this.calendars);
+      this.updateShownEvents();
+    },
     updateShownEvents() {
       this.filteredEvents = JSON.parse(
         localStorage.getItem("filteredEvents") || "{}"

@@ -35,7 +35,7 @@
         <input
           type="text"
           v-model="focus"
-          class="mb-8 p-3 bg-blueGray-200 rounded focus:ring-4"
+          class="mb-8 p-3 bg-blueGray-200 rounded focus:ring-4 focus:outline-none"
         />
       </div>
       <Button
@@ -45,16 +45,17 @@
       />
     </div>
     <div v-else-if="level === 'addTodos'"></div>
-    <div v-else-if="level === 'optimiseWarning'">
+    <div v-else-if="level === 'optimiseWarning'" class="max-w-prose">
       <div class="mb-4">It's time for me to do some flow-optimising magic.</div>
       <div class="text-3xl mb-4">⚗️</div>
       <div class="mb-4">
-        Just a reminder, what I'm about to do next is <b>irreversible</b>.
+        Just a reminder, what I'm about to do next is <b>irreversible</b>,
+        although you will be able to preview the changes before I make them.
       </div>
       <div class="mb-8">
-        I'm going to organise all your events to begin after one another in a
-        row, and then I'll move them around to give you the most flow time (time
-        that's uninterrupted). No events will be deleted.
+        All of your events will begin one after the other in a row, and then
+        I'll move them around to give you the most flow time (time that's
+        uninterrupted). No events will be deleted.
       </div>
       <Button
         text="Optimise"
@@ -130,6 +131,7 @@
 <script>
 import { subMinutes, addMinutes, parseISO, format } from "date-fns";
 import axios from "axios";
+import browser from "webextension-polyfill";
 
 export default {
   data() {
@@ -249,6 +251,9 @@ export default {
             freetime.minutes -= minutes;
             freetime.end = subMinutes(freetime.end, minutes);
 
+            movable.start.dateTime = freetime.end.toISOString();
+            movable.end.dateTime = newEndDateTime.toISOString();
+
             changes.push(
               axios.patch(
                 `calendars/${movable.calendar}/events/${movable.id}`,
@@ -282,47 +287,47 @@ export default {
           while (freetime.minutes > 0) {
             if (freetime.minutes >= 210) {
               const timeBlockEnd = addMinutes(freetime.start, 180);
-              changes.push(
-                axios.post("calendars/primary/events", {
-                  summary: this.focus,
-                  start: {
-                    dateTime: freetime.start.toISOString(),
-                  },
-                  end: {
-                    dateTime: timeBlockEnd.toISOString(),
-                  },
-                })
-              );
+              const focusEvent = {
+                summary: this.focus,
+                start: {
+                  dateTime: freetime.start.toISOString(),
+                },
+                end: {
+                  dateTime: timeBlockEnd.toISOString(),
+                },
+              };
+              changes.push(axios.post("calendars/primary/events", focusEvent));
+              events.push(focusEvent);
 
               this.highestFlowMinutes = 180;
 
               const breakEnd = addMinutes(timeBlockEnd, 30);
-              changes.push(
-                axios.post("calendars/primary/events", {
-                  summary: "Break",
-                  start: {
-                    dateTime: timeBlockEnd.toISOString(),
-                  },
-                  end: {
-                    dateTime: breakEnd.toISOString(),
-                  },
-                })
-              );
+              const breakEvent = {
+                summary: "Break",
+                start: {
+                  dateTime: timeBlockEnd.toISOString(),
+                },
+                end: {
+                  dateTime: breakEnd.toISOString(),
+                },
+              };
+              changes.push(axios.post("calendars/primary/events", breakEvent));
+              events.push(breakEvent);
 
               freetime.minutes -= 210;
               freetime.start = breakEnd;
             } else {
-              changes.push(
-                axios.post("calendars/primary/events", {
-                  summary: this.focus,
-                  start: {
-                    dateTime: freetime.start.toISOString(),
-                  },
-                  end: {
-                    dateTime: freetime.end.toISOString(),
-                  },
-                })
-              );
+              const focusEvent = {
+                summary: this.focus,
+                start: {
+                  dateTime: freetime.start.toISOString(),
+                },
+                end: {
+                  dateTime: freetime.end.toISOString(),
+                },
+              };
+              changes.push(axios.post("calendars/primary/events", focusEvent));
+              events.push(focusEvent);
               this.highestFlowMinutes =
                 freetime.minutes > this.highestFlowMinutes
                   ? freetime.minutes
@@ -342,6 +347,11 @@ export default {
 
         if (errors.length === 0) {
           this.level = "complete";
+
+          browser.runtime.sendMessage({
+            type: "loadNotifications",
+            data: events.filter((event) => event.start.dateTime >= now),
+          });
         } else {
           const eventPrint = (event) => {
             const startTime = format(parseISO(event.start.dateTime), "p");

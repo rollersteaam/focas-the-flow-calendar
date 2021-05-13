@@ -10,6 +10,11 @@ module.exports = {
       entry: "./src/standalone/main.js",
       title: "Flowcas",
     },
+    notification: {
+      template: "public/index.html",
+      entry: "./src/notification/main.js",
+      title: "Flowcas Notification",
+    },
   },
   pluginOptions: {
     browserExtension: {
