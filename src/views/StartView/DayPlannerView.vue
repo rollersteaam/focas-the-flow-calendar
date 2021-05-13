@@ -302,7 +302,7 @@ export default {
 
         // 4. Create time blocks for "focus" in the gaps, with a maximum of 3 hours, adding 30 minute breaks in long freetimes.
         for (let freetime of freetimes) {
-          while (freetime.minutes > 0) {
+          while (freetime.minutes >= 15) {
             if (freetime.minutes >= 210) {
               const timeBlockEnd = addMinutes(freetime.start, 180);
               const focusEvent = {
