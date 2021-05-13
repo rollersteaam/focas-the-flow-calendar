@@ -160,6 +160,16 @@ export default {
       this.events = events;
       this.level = "focus";
     },
+    roundTimeQuarterHour(time) {
+      var timeToReturn = new Date(time);
+
+      timeToReturn.setMilliseconds(
+        Math.round(timeToReturn.getMilliseconds() / 1000) * 1000
+      );
+      timeToReturn.setSeconds(Math.round(timeToReturn.getSeconds() / 60) * 60);
+      timeToReturn.setMinutes(Math.round(timeToReturn.getMinutes() / 15) * 15);
+      return timeToReturn;
+    },
     optimise() {
       setTimeout(async () => {
         const changes = [];
@@ -251,18 +261,26 @@ export default {
             freetime.minutes -= minutes;
             freetime.end = subMinutes(freetime.end, minutes);
 
-            movable.start.dateTime = freetime.end.toISOString();
-            movable.end.dateTime = newEndDateTime.toISOString();
+            movable.start.dateTime = this.roundTimeQuarterHour(
+              freetime.end
+            ).toISOString();
+            movable.end.dateTime = this.roundTimeQuarterHour(
+              newEndDateTime
+            ).toISOString();
 
             changes.push(
               axios.patch(
                 `calendars/${movable.calendar}/events/${movable.id}`,
                 {
                   start: {
-                    dateTime: freetime.end.toISOString(),
+                    dateTime: this.roundTimeQuarterHour(
+                      freetime.end
+                    ).toISOString(),
                   },
                   end: {
-                    dateTime: newEndDateTime.toISOString(),
+                    dateTime: this.roundTimeQuarterHour(
+                      newEndDateTime
+                    ).toISOString(),
                   },
                 }
               )
@@ -290,10 +308,14 @@ export default {
               const focusEvent = {
                 summary: this.focus,
                 start: {
-                  dateTime: freetime.start.toISOString(),
+                  dateTime: this.roundTimeQuarterHour(
+                    freetime.start
+                  ).toISOString(),
                 },
                 end: {
-                  dateTime: timeBlockEnd.toISOString(),
+                  dateTime: this.roundTimeQuarterHour(
+                    timeBlockEnd
+                  ).toISOString(),
                 },
               };
               changes.push(axios.post("calendars/primary/events", focusEvent));
@@ -305,10 +327,12 @@ export default {
               const breakEvent = {
                 summary: "Break",
                 start: {
-                  dateTime: timeBlockEnd.toISOString(),
+                  dateTime: this.roundTimeQuarterHour(
+                    timeBlockEnd
+                  ).toISOString(),
                 },
                 end: {
-                  dateTime: breakEnd.toISOString(),
+                  dateTime: this.roundTimeQuarterHour(breakEnd).toISOString(),
                 },
               };
               changes.push(axios.post("calendars/primary/events", breakEvent));
@@ -320,10 +344,14 @@ export default {
               const focusEvent = {
                 summary: this.focus,
                 start: {
-                  dateTime: freetime.start.toISOString(),
+                  dateTime: this.roundTimeQuarterHour(
+                    freetime.start
+                  ).toISOString(),
                 },
                 end: {
-                  dateTime: freetime.end.toISOString(),
+                  dateTime: this.roundTimeQuarterHour(
+                    freetime.end
+                  ).toISOString(),
                 },
               };
               changes.push(axios.post("calendars/primary/events", focusEvent));
@@ -347,6 +375,8 @@ export default {
 
         if (errors.length === 0) {
           this.level = "complete";
+
+          localStorage.setItem("events", JSON.stringify(events));
 
           browser.runtime.sendMessage({
             type: "loadNotifications",

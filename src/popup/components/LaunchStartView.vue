@@ -4,6 +4,13 @@
       <img src="@/assets/icon.png" alt="" class="inline w-20" />
       <span class="text-4xl text-blue-600 mt-2">Flowcas</span>
     </div>
+    <div class="mx-auto w-1/2">
+      <Calendar
+        v-if="events.length > 0"
+        :events="events"
+        :height="800"
+      />
+    </div>
     <div
       v-if="tabOpened"
       class="text-lg text-blueGray-700 bg-blue-200 px-10 py-5 rounded mb-5 animate__animated animate__fadeIn"
@@ -27,6 +34,7 @@
 
 <script>
 import browser from "webextension-polyfill";
+import { parseISO } from "date-fns";
 
 export default {
   name: "LaunchStartView",
@@ -34,7 +42,16 @@ export default {
     return {
       tabOpened: false,
       buttonClass: "inline-block",
+      events: [],
     };
+  },
+  mounted() {
+    const events = JSON.parse(localStorage.getItem("events") || "[]");
+    for (let event of events) {
+      event.start.dateTime = parseISO(event.start.dateTime);
+      event.end.dateTime = parseISO(event.end.dateTime);
+    }
+    this.events = events;
   },
   methods: {
     launchPlanner() {

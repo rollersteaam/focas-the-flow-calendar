@@ -1,3 +1,5 @@
+import { subMinutes } from "date-fns";
+
 const timeouts = [];
 
 async function notify(event) {
@@ -24,7 +26,7 @@ function loadNotifications(events) {
   for (let event of events) {
     const timeout = setTimeout(
       () => notify(event),
-      event.start.dateTime - new Date()
+      subMinutes(event.start.dateTime - new Date(), 2).getTime()
     );
 
     timeouts.push(timeout);
